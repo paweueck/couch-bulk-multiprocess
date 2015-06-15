@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='mpcouch',
-      version='0.1',
+      version='0.2',
       description='A multiprocess bulk-uploading helper for CouchDB',
       url='https://github.com/scubbx/couch-bulk-multiprocess',
       author='Markus Mayr',
