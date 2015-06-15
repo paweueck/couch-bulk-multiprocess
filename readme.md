@@ -18,7 +18,7 @@ Since every bulk-upload is performed by a single process, the original program c
 
 To wait for all running uploads to finish and to make sure the very last batch of documents gets pushed to the server, run
 
-`myCouchPusher.finish`
+`myCouchPusher.finish()`
 
 after your final document was sent to pushData.
 The module now waits for all the uploads to finish and uploads the final bulk of collected documents.
