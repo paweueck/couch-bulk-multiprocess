@@ -1,12 +1,17 @@
-# Multiprocess Bulk Uploading to CouchDB
+Multiprocess Bulk Uploading to CouchDB
+########################################
 
-## Status
+Status
+======
 
 This is not yet finished, but can already be used.
 
-## Usage
+Usage
+=====
 
-Create a new mpcouchPusher object `myCouchPusher = mpcouch.mpcouchPusher( "http://localhost:5984/myDatabase", 30000 )`.
+Create a new mpcouchPusher object
+
+`myCouchPusher = mpcouch.mpcouchPusher( "http://localhost:5984/myDatabase", 30000 )`
 
 Use this object every time you have one single document ready to be stored in the database:
 
