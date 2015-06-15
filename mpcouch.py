@@ -15,7 +15,7 @@ Make sure to call mpcouchPusher.finish() at the end!
 """
 
 import multiprocessing
-#import couchdb
+import couchdb
 
 class mpcouchPusher():
     """A class that collects documents and uploads them as bulk as soon as a 
@@ -41,11 +41,11 @@ class mpcouchPusher():
         function to ensure that all started processes finish and no data is
         lost.
     """
-    def __init__(self,db,limit):
+    def __init__(self,dburl,limit):
         """
         Parameters
         ----------
-            db: must be a valid CouchDB database object
+            dburl: must be a URL to a valid CouchDB database
         
             limit: specifies the amount of documents that need to be collected
                    before they are pushed to the databases collectively.
@@ -55,7 +55,9 @@ class mpcouchPusher():
             returns a dbPusher object
                 """
         self.collectedData = []
-        self.db = db
+        dbname = "/".join(dburl.split("/")[-1:])
+        dbhost = "/".join(dburl.split("/")[:-1])
+        self.db = couchdb.Server(dbhost)[dbname]
         self.limit = limit
         self.totalcount = 0
         self.jobs = []
@@ -72,13 +74,13 @@ class mpcouchPusher():
             #bulkUpload(self.db, self.collectedData)
             self.collectedData = []
             self.threadcount = len( [y for y in self.jobs if y.is_alive() == True] ) 
-            print( "current threadcount: ", self.threadcount)
-            print( "pushed documents: ", self.limit )
-            print( "total docs so far: ", self.totalcount)
+            print( "current threadcount: ", self.threadcount , "    ", "pushed documents: ", self.limit, "    ", "total docs so far: ", self.totalcount)
     
     def finish(self):
         for proc in self.jobs:
+            print("waiting for upload-process " + str(proc.pid) + " to finish ...")
             proc.join()
             del proc
+        print("uploading final set of documents ...")
         self.db.update(self.collectedData)
         self.collectedData = []
