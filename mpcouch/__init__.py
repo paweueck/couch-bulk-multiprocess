@@ -42,18 +42,6 @@ class mpcouchPusher():
         lost.
     """
     def __init__(self,dburl,limit):
-        """
-        Parameters
-        ----------
-            dburl: must be a URL to a valid CouchDB database
-        
-            limit: specifies the amount of documents that need to be collected
-                   before they are pushed to the databases collectively.
-        
-        Returns
-        -------
-            returns a dbPusher object
-                """
         self.collectedData = []
         dbname = "/".join(dburl.split("/")[-1:])
         dbhost = "/".join(dburl.split("/")[:-1])
