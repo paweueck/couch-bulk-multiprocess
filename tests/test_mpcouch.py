@@ -25,16 +25,5 @@ class mpcouchTest(unittest.TestCase):
         self.assertEqual(myc.destroyDatabase(),None)
         del myc
     
-    def test_pushData_highLoad(self):
-        myc = mpcouch.mpcouchPusher("http://127.0.0.1:5984/testdb",10000)
-        
-        for usteps in range(2):
-            for i in range(1,10000): self.assertEqual(myc.pushData({"id":str(usteps) + str(i)}),i)
-            self.assertEqual(myc.pushData({"id":str(usteps) + str(10001)}),0)
-        
-        self.assertEqual(myc.finish(),0)
-        
-        self.assertEqual(myc.destroyDatabase(),None)
-        del myc
 
 unittest.main()
