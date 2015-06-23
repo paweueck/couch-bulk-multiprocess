@@ -66,12 +66,12 @@ class mpcouchPusher():
             #bulkUpload(self.db, self.collectedData)
             self.collectedData = []
             self.threadcount = len( [y for y in self.jobs if y.is_alive() == True] ) 
-            print( "current threadcount: ", self.threadcount , "    ", "pushed documents: ", self.limit, "    ", "total docs so far: ", self.totalcount)
+            print( "current threadcount: {} pushed documents: {}  total docs so far: {}").format(self.threadcount, self.limit, self.totalcount)
         return len(self.collectedData)
     
     def finish(self):
         for proc in self.jobs:
-            print("waiting for upload-process " + str(proc) + " to finish ...")
+            print("waiting for upload-process {0} to finish ...").format(proc)
             proc.join()
             del proc
         
