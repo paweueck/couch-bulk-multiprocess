@@ -57,18 +57,16 @@ class mpcouchPusher():
         self.threadcount = 0
         self.jobsbuffer = []
         self.jobslimit = 1
+        self.finished = False
 
     def pushData(self, data):
         self.collectedData.append(data)
         self.totalcount += 1
         if len(self.collectedData) >= self.limit:
-            # print( "saving ...." )
             # generate a new process and store in in the jobsbuffer
             p = mp.Process(target=self.db.update, args=(self.collectedData,))
             self.jobsbuffer.append(p)
-            print("spawned process")
-            # self.jobs.append(p)
-            # p.start()
+            print("spawned process {}".format(len(self.jobs)+len(self.jobsbuffer)))
             self.collectedData = []
         self.threadcount = len([y for y in self.jobs if y.is_alive() is True]) # analysis:ignore
         if self.threadcount < self.jobslimit:
@@ -78,15 +76,15 @@ class mpcouchPusher():
                 self.jobs.append(newp)
                 newp.start()
                 self.threadcount = len([y for y in self.jobs if y.is_alive() is True]) # analysis:ignore
-                print("current threadcount: {} pushed documents: {}  total docs so far: {}".format(self.threadcount, self.limit, self.totalcount)) # analysis:ignore
+                print("processcount: {} process-queue: {}  collected so far: {}".format(self.threadcount, len(self.jobsbuffer), self.totalcount))
         return len(self.collectedData)
 
     def finish(self):
+        waitForCompletion = True # for later implementation, not yet functional
         print("generate final upload process ...")
         if len(self.collectedData) > 0:
             p = mp.Process(target=self.db.update, args=(self.collectedData,))
             self.jobsbuffer.append(p)
-            # p.start()  # not exactly the most elegant solution, but it will do
         while len(self.jobsbuffer) > 0:
             # as long as there are still jobs in the queue, exectue them
             self.threadcount = len([y for y in self.jobs if y.is_alive() is True]) # analysis:ignore
@@ -95,12 +93,23 @@ class mpcouchPusher():
                 self.jobs.append(newp)
                 newp.start()
                 self.threadcount = len([y for y in self.jobs if y.is_alive() is True]) # analysis:ignore
-                print("current threadcount: {} pushed documents: {}  total docs so far: {}".format(self.threadcount, self.limit, self.totalcount)) # analysis:ignore
+                print("processcount: {} process-queue: {}  collected so far: {}".format(self.threadcount, len(self.jobsbuffer), self.totalcount))            
+
         # now, the jobsqueue is empty, we have to wait for the remaining jobs to complete
+        if waitForCompletion == True:
+            # but only, if we were told to do so by the argument "waitForCompletion"
+            for proc in [runningJob for runningJob in self.jobs if runningJob.is_alive() is True]:
+                print("waiting for upload-process {0} to finish ...".format(proc))
+                proc.join()
+                del proc
+                self.finished = True
+        else:
+            # if we should not wait for it, just update the self.finished variable
+            # this makes it possible for the parent app to check, whether it is save to quit already
+            while len([runningJob for runningJob in self.jobs if runningJob.is_alive() is True]) > 0:
+                self.finished = False
+            self.finished = True
         for proc in self.jobs:
-            #self.threadcount = len([y for y in self.jobs if y.is_alive() is True]) # analysis:ignore
-            print("waiting for upload-process {0} to finish ...".format(proc))
-            proc.join()
             del proc
         message = len(self.collectedData)
         self.collectedData = []
