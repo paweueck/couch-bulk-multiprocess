@@ -1,10 +1,19 @@
 Multiprocess Bulk Uploading to CouchDB
-########################################
+######################################
 
 Status
 ======
 
 This is not yet finished, but can already be used.
+
+History
+=======
+
+v 0.2.5
+-------
+
+* only spawn one concurrent process for performing uploads
+
 
 Usage
 =====
