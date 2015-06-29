@@ -24,25 +24,29 @@ class mpcouchPusher():
 
     Methods
     -------
-    __init__(db,limit):
+    __init__(db,limit,jobslimit):
         Initializes the mpcouchPusher object.
 
         db: must be a valid CouchDB database object
 
         limit: specifies the amount of documents that need to be collected
                before they are pushed to the databases collectively.
+               Defaults to 30000
+        
+        jobslimit: The amount of processes used in parallel for uploading.
+                   Defaults to 1
 
     pushData(data):
         Stores the content of data to the databas specified at creation date.
 
         data: must be a valid CouchDB document in JSON format.
 
-    finish:
+    finish(waitForCompletion):
         must be called after the last document has been pushed to the pushData
         function to ensure that all started processes finish and no data is
         lost.
     """
-    def __init__(self, dburl, limit):
+    def __init__(self, dburl, limit = 30000, jobslimit = 1):
         self.collectedData = []
         self.dbname = "/".join(dburl.split("/")[-1:])
         self.dbhost = "/".join(dburl.split("/")[:-1])
@@ -56,7 +60,7 @@ class mpcouchPusher():
         self.jobs = []
         self.threadcount = 0
         self.jobsbuffer = []
-        self.jobslimit = 1
+        self.jobslimit = jobslimit
         self.finished = False
 
     def pushData(self, data):
@@ -79,8 +83,7 @@ class mpcouchPusher():
                 print("processcount: {} process-queue: {}  collected so far: {}".format(self.threadcount, len(self.jobsbuffer), self.totalcount))
         return len(self.collectedData)
 
-    def finish(self):
-        waitForCompletion = True # for later implementation, not yet functional
+    def finish(self, waitForCompletion = True): # waitForCompletion is for later implementation, not yet functional
         print("generate final upload process ...")
         if len(self.collectedData) > 0:
             p = mp.Process(target=self.db.update, args=(self.collectedData,))
@@ -97,7 +100,7 @@ class mpcouchPusher():
 
         # now, the jobsqueue is empty, we have to wait for the remaining jobs to complete
         if waitForCompletion == True:
-            # but only, if we were told to do so by the argument "waitForCompletion"
+            # but only, if we were told to do so by the argument "waitForCompletion" (not yet fully implemented)
             for proc in [runningJob for runningJob in self.jobs if runningJob.is_alive() is True]:
                 print("waiting for upload-process {0} to finish ...".format(proc))
                 proc.join()
@@ -114,6 +117,9 @@ class mpcouchPusher():
         message = len(self.collectedData)
         self.collectedData = []
         return message
+
+    def has_finished(self):
+        return self.finished
 
     def destroyDatabase(self):
         self.server.delete(self.dbname)

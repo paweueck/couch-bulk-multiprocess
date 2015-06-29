@@ -5,8 +5,9 @@ import mpcouch
 
 
 class mpcouchTest(unittest.TestCase):
-    '''
+    
     def test_pushData(self):
+        '''
         myc = mpcouch.mpcouchPusher("http://127.0.0.1:5984/testdb",100)
         self.assertIsInstance(myc,mpcouch.mpcouchPusher)
         
@@ -25,12 +26,16 @@ class mpcouchTest(unittest.TestCase):
         self.assertEqual(myc.destroyDatabase(),None)
         del myc
         '''
+        
     def test_pushDataBig(self):
         myc = mpcouch.mpcouchPusher("http://127.0.0.1:5984/testdb",30000)
 
-        for i in range(0,5000000):
+        for i in range(0,50000):
             myc.pushData({"id":i})
         myc.finish()
+        
+        self.assertEqual(myc.destroyDatabase(),None)
+        
         del myc
 
 unittest.main()
