@@ -14,7 +14,7 @@ keeps on running.
 Make sure to call mpcouchPusher.finish() at the end!
 """
 
-import multiprocessing as mp
+import multiprocessing.dummy as mp
 import couchdb
 
 
@@ -62,7 +62,7 @@ class mpcouchPusher():
         self.jobsbuffer = []
         self.jobslimit = jobslimit
         self.finished = False
-
+    
     def pushData(self, data):
         self.collectedData.append(data)
         self.totalcount += 1
@@ -79,6 +79,7 @@ class mpcouchPusher():
                 newp = self.jobsbuffer.pop()
                 self.jobs.append(newp)
                 newp.start()
+                #[self.jobs.pop(y) for y in self.jobs if y.is_alive() is False]
                 self.threadcount = len([y for y in self.jobs if y.is_alive() is True]) # analysis:ignore
                 print("processcount: {} process-queue: {}  collected so far: {}".format(self.threadcount, len(self.jobsbuffer), self.totalcount))
         return len(self.collectedData)
