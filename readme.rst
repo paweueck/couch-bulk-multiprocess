@@ -9,6 +9,11 @@ This is not yet finished, but can already be used.
 History
 =======
 
+v 0.2.6
+-------
+
+* 
+
 v 0.2.5
 -------
 
