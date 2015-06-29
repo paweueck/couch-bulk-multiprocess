@@ -26,9 +26,9 @@ class mpcouchTest(unittest.TestCase):
         del myc
         '''
     def test_pushDataBig(self):
-        myc = mpcouch.mpcouchPusher("http://127.0.0.1:5984/testdb",10000)
+        myc = mpcouch.mpcouchPusher("http://127.0.0.1:5984/testdb",30000)
 
-        for i in range(0,50000):
+        for i in range(0,5000000):
             myc.pushData({"id":i})
         myc.finish()
         del myc
