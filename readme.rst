@@ -14,6 +14,11 @@ v 0.2.5
 
 * only spawn one concurrent process for performing uploads
 
+v 0.2.4
+-------
+
+* working version, still spans unlimited amount of processes
+
 
 Usage
 =====
