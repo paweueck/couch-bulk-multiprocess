@@ -56,7 +56,7 @@ class mpcouchPusher():
         self.jobs = []
         self.threadcount = 0
         self.jobsbuffer = []
-        self.jobslimit = 1
+        self.jobslimit = 2
         self.finished = False
 
     def pushData(self, data):
