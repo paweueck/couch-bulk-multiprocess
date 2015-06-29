@@ -56,7 +56,7 @@ class mpcouchPusher():
         self.jobs = []
         self.threadcount = 0
         self.jobsbuffer = []
-        self.jobslimit = 2
+        self.jobslimit = 1
         self.finished = False
 
     def pushData(self, data):
@@ -77,7 +77,7 @@ class mpcouchPusher():
                 newp.start()
                 self.threadcount = len([y for y in self.jobs if y.is_alive() is True]) # analysis:ignore
                 print("processcount: {} process-queue: {}  collected so far: {}".format(self.threadcount, len(self.jobsbuffer), self.totalcount))
-        # return len(self.collectedData)
+        return len(self.collectedData)
 
     def finish(self):
         waitForCompletion = True # for later implementation, not yet functional
@@ -113,7 +113,7 @@ class mpcouchPusher():
             del proc
         message = len(self.collectedData)
         self.collectedData = []
-        # return message
+        return message
 
     def destroyDatabase(self):
         self.server.delete(self.dbname)

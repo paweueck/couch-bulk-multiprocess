@@ -56,7 +56,7 @@ class mpcouchPusher():
         self.jobs = []
         self.threadcount = 0
         self.jobsbuffer = []
-        self.jobslimit = 2
+        self.jobslimit = 1
         self.finished = False
 
     def pushData(self, data):
@@ -97,7 +97,7 @@ class mpcouchPusher():
 
         # now, the jobsqueue is empty, we have to wait for the remaining jobs to complete
         if waitForCompletion == True:
-            # but only, if we were told to do so by the argument "waitForCompletion"
+            # but only, if we were told to do so by the argument "waitForCompletion" (not yet fully implemented)
             for proc in [runningJob for runningJob in self.jobs if runningJob.is_alive() is True]:
                 print("waiting for upload-process {0} to finish ...".format(proc))
                 proc.join()
