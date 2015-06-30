@@ -14,9 +14,10 @@ keeps on running.
 Make sure to call mpcouchPusher.finish() at the end!
 """
 
-import multiprocessing.dummy as mp
+import multiprocessing as mpt
+import multiprocessing.dummy as mpd
 import couchdb
-
+mp = None
 
 class mpcouchPusher():
     """A class that collects documents and uploads them as bulk as soon as a
@@ -46,7 +47,12 @@ class mpcouchPusher():
         function to ensure that all started processes finish and no data is
         lost.
     """
-    def __init__(self, dburl, limit = 30000, jobslimit = 1):
+    def __init__(self, dburl, limit = 30000, jobslimit = 1,threads = False):
+        global mp
+        if threads == False:
+            mp = mpt
+        else:
+            mp = mpd
         self.collectedData = []
         self.dbname = "/".join(dburl.split("/")[-1:])
         self.dbhost = "/".join(dburl.split("/")[:-1])
