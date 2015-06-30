@@ -51,6 +51,7 @@ class mpcouchPusher():
         self.dbname = "/".join(dburl.split("/")[-1:])
         self.dbhost = "/".join(dburl.split("/")[:-1])
         self.server = couchdb.Server(self.dbhost)
+        # if a database with the given name does not exist, it is created
         try:
             self.db = self.server[self.dbname]
         except couchdb.ResourceNotFound:
@@ -72,7 +73,7 @@ class mpcouchPusher():
             self.jobsbuffer.append(p)
             print("spawned process {}".format(len(self.jobs)+len(self.jobsbuffer)))
             self.collectedData = []
-        self.threadcount = len([y for y in self.jobs if y.is_alive() is True]) # analysis:ignore
+        self.threadcount = len([None for y in self.jobs if y.is_alive() is True]) # analysis:ignore
         if self.threadcount < self.jobslimit:
             # there is room for a new job, so take one from the jobsbuffer
             if len(self.jobsbuffer) > 0:
@@ -80,7 +81,9 @@ class mpcouchPusher():
                 self.jobs.append(newp)
                 newp.start()
                 #[self.jobs.pop(y) for y in self.jobs if y.is_alive() is False]
-                self.threadcount = len([y for y in self.jobs if y.is_alive() is True]) # analysis:ignore
+                self.jobs = [y for y in self.jobs if y.is_alive() is True]
+                self.threadcount = len(self.jobs)
+                #self.threadcount = len([None for y in self.jobs if y.is_alive() is True]) # analysis:ignore
                 print("processcount: {} process-queue: {}  collected so far: {}".format(self.threadcount, len(self.jobsbuffer), self.totalcount))
         return len(self.collectedData)
 
@@ -91,12 +94,14 @@ class mpcouchPusher():
             self.jobsbuffer.append(p)
         while len(self.jobsbuffer) > 0:
             # as long as there are still jobs in the queue, exectue them
-            self.threadcount = len([y for y in self.jobs if y.is_alive() is True]) # analysis:ignore
+            self.jobs = [y for y in self.jobs if y.is_alive() is True]
+            self.threadcount = len(self.jobs)
+            #self.threadcount = len([None for y in self.jobs if y.is_alive() is True]) # analysis:ignore
             if self.threadcount < self.jobslimit:
                 newp = self.jobsbuffer.pop()
                 self.jobs.append(newp)
                 newp.start()
-                self.threadcount = len([y for y in self.jobs if y.is_alive() is True]) # analysis:ignore
+                self.threadcount = len([None for y in self.jobs if y.is_alive() is True]) # analysis:ignore
                 print("processcount: {} process-queue: {}  collected so far: {}".format(self.threadcount, len(self.jobsbuffer), self.totalcount))            
 
         # now, the jobsqueue is empty, we have to wait for the remaining jobs to complete
@@ -110,7 +115,7 @@ class mpcouchPusher():
         else:
             # if we should not wait for it, just update the self.finished variable
             # this makes it possible for the parent app to check, whether it is save to quit already
-            while len([runningJob for runningJob in self.jobs if runningJob.is_alive() is True]) > 0:
+            while len([None for runningJob in self.jobs if runningJob.is_alive() is True]) > 0:
                 self.finished = False
             self.finished = True
         for proc in self.jobs:

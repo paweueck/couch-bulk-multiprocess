@@ -51,6 +51,7 @@ class mpcouchPusher():
         self.dbname = "/".join(dburl.split("/")[-1:])
         self.dbhost = "/".join(dburl.split("/")[:-1])
         self.server = couchdb.Server(self.dbhost)
+        # if a database with the given name does not exist, it is created
         try:
             self.db = self.server[self.dbname]
         except couchdb.ResourceNotFound:
@@ -80,7 +81,9 @@ class mpcouchPusher():
                 self.jobs.append(newp)
                 newp.start()
                 #[self.jobs.pop(y) for y in self.jobs if y.is_alive() is False]
-                self.threadcount = len([None for y in self.jobs if y.is_alive() is True]) # analysis:ignore
+                self.jobs = [y for y in self.jobs if y.is_alive() is True]
+                self.threadcount = len(self.jobs)
+                #self.threadcount = len([None for y in self.jobs if y.is_alive() is True]) # analysis:ignore
                 print("processcount: {} process-queue: {}  collected so far: {}".format(self.threadcount, len(self.jobsbuffer), self.totalcount))
         return len(self.collectedData)
 
@@ -91,7 +94,9 @@ class mpcouchPusher():
             self.jobsbuffer.append(p)
         while len(self.jobsbuffer) > 0:
             # as long as there are still jobs in the queue, exectue them
-            self.threadcount = len([None for y in self.jobs if y.is_alive() is True]) # analysis:ignore
+            self.jobs = [y for y in self.jobs if y.is_alive() is True]
+            self.threadcount = len(self.jobs)
+            #self.threadcount = len([None for y in self.jobs if y.is_alive() is True]) # analysis:ignore
             if self.threadcount < self.jobslimit:
                 newp = self.jobsbuffer.pop()
                 self.jobs.append(newp)
