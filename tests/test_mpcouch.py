@@ -2,6 +2,7 @@
 
 import unittest
 import mpcouch
+import time
 
 
 class mpcouchTest(unittest.TestCase):
@@ -28,9 +29,9 @@ class mpcouchTest(unittest.TestCase):
         '''
         
     def test_pushDataBig(self):
-        myc = mpcouch.mpcouchPusher("http://127.0.0.1:5984/testdb",1000,threads = True)
+        myc = mpcouch.mpcouchPusher("http://127.0.0.1:5984/testdb",1000,threads = False)
 
-        for i in range(0,57897):
+        for i in range(0,5000000):
             myc.pushData({"id":i})
         myc.finish()
         

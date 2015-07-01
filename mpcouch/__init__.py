@@ -129,7 +129,10 @@ class mpcouchPusher():
         message = len(self.collectedData)
         self.collectedData = []
         return message
-
+    
+    def get_waitingjobscount(self):
+        return len(self.jobsbuffer)
+    
     def has_finished(self):
         return self.finished
 

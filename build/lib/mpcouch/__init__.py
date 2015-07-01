@@ -16,8 +16,8 @@ Make sure to call mpcouchPusher.finish() at the end!
 
 import multiprocessing as mpt
 import multiprocessing.dummy as mpd
-import couchdb
 mp = None
+import couchdb
 
 class mpcouchPusher():
     """A class that collects documents and uploads them as bulk as soon as a
@@ -129,7 +129,10 @@ class mpcouchPusher():
         message = len(self.collectedData)
         self.collectedData = []
         return message
-
+    
+    def get_waitingjobscount(self):
+        return len(self.jobsbuffer)
+    
     def has_finished(self):
         return self.finished
 
