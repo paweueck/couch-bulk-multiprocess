@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name='mpcouch',
-    version='0.2.5-dev',
+    version='0.2.6',
     description='A multiprocess bulk-uploading helper for CouchDB',
     long_description=readme(),
     classifiers=[

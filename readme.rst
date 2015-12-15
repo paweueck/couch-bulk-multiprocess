@@ -12,7 +12,7 @@ History
 v 0.2.6
 -------
 
-* 
+* Introduced the ``jobsbuffersizemax`` argument to limit the amount of upload-processed buffered in working memory. Now it is possible to work on data of infinite size.
 
 v 0.2.5
 -------
