@@ -9,6 +9,12 @@ This is not yet finished, but can already be used.
 History
 =======
 
+
+v 0.2.7
+-------
+
+* Updated readme
+
 v 0.2.6
 -------
 
@@ -33,6 +39,9 @@ Create a new mpcouchPusher object
 .. code-block::
     
     myCouchPusher = mpcouch.mpcouchPusher( "http://localhost:5984/myDatabase", 30000 )
+
+If the data is created faster than the upload happens, it might be necessary to let the generation of new documents pause befor allowing another batch-upload process to be buffered. The amount of bufferd upload-processes is specified by the optional ``jobsbuffersizemax`` argument which defaults to 10. This means that when there are 10 batch-upload processes already waiting in line to be executed, the module holds the main python thread until one process has finished.
+By adjusing this value it is possible to find an equilibrium between upload-buffer (working memory) and document generation speed.
 
 Use this object every time you have one single document ready to be stored in the database:
 
