@@ -1,3 +1,6 @@
+.. image:: https://badge.fury.io/py/mpcouch.svg
+    :target: https://badge.fury.io/py/mpcouch
+
 Multiprocess Bulk Uploading to CouchDB
 ######################################
 
